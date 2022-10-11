@@ -1,57 +1,51 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
-// import Triangle from './js/triangle.js';
-// import Rectangle from './js/rectangle.js';
 
-// function handleTriangleForm() {
-//   event.preventDefault();
-//   document.querySelector('#response').innerText = null;
-//   const length1 = parseInt(document.querySelector('#length1').value);
-//   const length2 = parseInt(document.querySelector('#length2').value);
-//   const length3 = parseInt(document.querySelector('#length3').value);
-//   const triangle = new Triangle(length1, length2, length3);
-//   const response = triangle.checkType();
-//   const pTag = document.createElement("p");
-//   pTag.append(`Your result is: ${response}.`);
-//   document.querySelector('#response').append(pTag);
-// }
+// Business Logic
+process.env.API_KEY;
+function getGif (searchResult){
+    let request = new XMLHttpRequest();
+    console.log(searchResult);
+    const url = `https://api.giphy.com/v1/gifs/search?api_key=${process.env.API_KEY}&q=${searchResult}&limit=1&offset=0&rating=pg&lang=en`;
 
-// function handleRectangleForm() {
-//   event.preventDefault();
-//   document.querySelector('#response2').innerText = null;
-//   const length1 = parseInt(document.querySelector('#rect-length1').value);
-//   const length2 = parseInt(document.querySelector('#rect-length2').value);
-//   const rectangle = new Rectangle(length1, length2);
-//   const response = rectangle.getArea();
-//   const pTag = document.createElement("p");
-//   pTag.append(`The area of the rectangle is ${response}.`);
-//   document.querySelector('#response2').append(pTag);
-// }
+  request.addEventListener("loadend", function() {
+    const response = JSON.parse(this.responseText);
+    let data = response.data;
+    if (this.status === 200) {
+      data.map(function(image)  {
+         console.log(image.images.downsized.url);
+       });
+      printElements(response,searchResult);
+    } else{
+     printError(this.response,searchResult);
+    }
+});
+  
+request.open("GET",url,true);
+request.send();
+}
 
-// window.addEventListener("load", function() {
-//   document.querySelector("#triangle-checker-form").addEventListener("submit", handleTriangleForm);
-//   document.querySelector("#rectangle-area-form").addEventListener("submit", handleRectangleForm);
-// });
+//UI Logic
 
+function printElements(apiResponse,searchResult){
+  document.getElementById('gifResult').setAttribute("src",apiResponse.data[Math.floor(Math.random())].images.downsized.url);
+  document.getElementById("searchResultOutPut").innerText = `searchResult: ${searchResult}`;
+}
 
-// This goes in src/js/nameofthejsfiles.js
-// export default class Triangle {
-//   constructor(side1, side2, side3) {
-//     this.side1 = side1;
-//     this.side2 = side2;
-//     this.side3 = side3;
-//   }
+function printError(request, apiResponse, searchResult)  {
+   document.getElementById("searchResultOutPut").innerText = `There was an error finding the GIF you want for ${searchResult}: ${request.status} ${request.statusText} ${apiResponse.message}`;
+}
 
-//   checkType() {
-//     if ((this.side1 > (this.side2 + this.side3)) || (this.side2 > (this.side1 + this.side3)) || (this.side3 > (this.side1 + this.side2))) {
-//       return "not a triangle";
-//     } else if ((this.side1 !== this.side2) && ((this.side1 !== this.side3)) && ((this.side2 !== this.side3))) {
-//       return "scalene triangle";
-//     }  else if ((this.side1 === this.side2) && (this.side1 === this.side3)) {
-//       return "equilateral triangle";
-//     } else {
-//       return "isosceles triangle";
-//     }
-//   }    
-// }
+function handleSubmission(event){
+  event.preventDefault();
+  const searchResult = document.getElementById("searchResult").value;
+  console.log(searchResult);
+  document.getElementById('searchResult').value = null;
+  console.log(searchResult);
+  getGif(searchResult);
+}
+
+window.addEventListener("load", function(){
+  document.querySelector('form#search').addEventListener("submit",handleSubmission);
+});
