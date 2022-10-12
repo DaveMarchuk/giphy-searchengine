@@ -1,40 +1,28 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
+import GifService from './js/gif-service';
 
 // Business Logic
-process.env.API_KEY;
-function getGif (searchResult){
-    let request = new XMLHttpRequest();
-    console.log(searchResult);
-    const url = `https://api.giphy.com/v1/gifs/search?api_key=${process.env.API_KEY}&q=${searchResult}&limit=1&offset=0&rating=pg&lang=en`;
-
-  request.addEventListener("loadend", function() {
-    const response = JSON.parse(this.responseText);
-    let data = response.data;
-    if (this.status === 200) {
-      data.map(function(image)  {
-         console.log(image.images.downsized.url);
-       });
-      printElements(response,searchResult);
-    } else{
-     printError(this.response,searchResult);
-    }
-});
-  
-request.open("GET",url,true);
-request.send();
+function getGif (searchResult)  {
+    let promise = GifService.getGif(searchResult);
+    promise.then(function(gifDataArray) {
+      printElements(gifDataArray);
+    }, function(errorArray) {
+      printError(errorArray);
+    });
 }
 
 //UI Logic
-
-function printElements(apiResponse,searchResult){
-  document.getElementById('gifResult').setAttribute("src",apiResponse.data[Math.floor(Math.random())].images.downsized.url);
-  document.getElementById("searchResultOutPut").innerText = `searchResult: ${searchResult}`;
+function printElements(data)  {
+  data.map(function(image)  {
+    document.getElementById('gifResult').setAttribute("src",image.images.downsized.url);
+    document.getElementById("searchResultOutPut").innerText = `searchResult: ${image.images.downsized.url}}`;
+  });
 }
 
-function printError(request, apiResponse, searchResult)  {
-   document.getElementById("searchResultOutPut").innerText = `There was an error finding the GIF you want for ${searchResult}: ${request.status} ${request.statusText} ${apiResponse.message}`;
+function printError(error)  {
+   document.getElementById("searchResultOutPut").innerText = `There was an error finding the GIF you want for ${error[2]}: ${error[0].status} ${error[0].statusText} ${error[1].message}`;
 }
 
 function handleSubmission(event){
