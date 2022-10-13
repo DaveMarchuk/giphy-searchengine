@@ -15,11 +15,15 @@ function getGif(searchResult)  {
 
 //UI Logic
 function printElements(gifData)  {
-  console.log("You hit 200");
-  console.log(gifData[0].url);
-  document.getElementById('gifResult').setAttribute("src", gifData[0].url);
-  document.getElementById("searchResultOutPut").innerText = `Your Results for: ${gifData[1]}`;
+  let returnGifs = gifData[0].data;
+
+  returnGifs.map(function(image)  {
+    let img = document.createElement('img');
+    img.src = image.images.downsized.url;
+    document.body.appendChild(img);
+  });
 }
+
 
 function printError(error)  {
    document.getElementById("searchResultOutPut").innerText = `There was an error finding the GIF you want for ${error[2]}: ${error[0].status} ${error[0].statusText} ${error[1].message}`;
