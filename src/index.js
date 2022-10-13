@@ -4,7 +4,7 @@ import './css/styles.css';
 import GifService from './js/gif-service';
 
 // Business Logic
-function getGif (searchResult)  {
+function getGif(searchResult)  {
     let promise = GifService.getGif(searchResult);
     promise.then(function(gifDataArray) {
       printElements(gifDataArray);
@@ -14,11 +14,11 @@ function getGif (searchResult)  {
 }
 
 //UI Logic
-function printElements(data)  {
-  data.map(function(image)  {
-    document.getElementById('gifResult').setAttribute("src",image.images.downsized.url);
-    document.getElementById("searchResultOutPut").innerText = `searchResult: ${image.images.downsized.url}}`;
-  });
+function printElements(gifData)  {
+  console.log("You hit 200");
+  console.log(gifData[0].url);
+  document.getElementById('gifResult').setAttribute("src", gifData[0].url);
+  document.getElementById("searchResultOutPut").innerText = `Your Results for: ${gifData[1]}`;
 }
 
 function printError(error)  {
@@ -28,9 +28,7 @@ function printError(error)  {
 function handleSubmission(event){
   event.preventDefault();
   const searchResult = document.getElementById("searchResult").value;
-  console.log(searchResult);
   document.getElementById('searchResult').value = null;
-  console.log(searchResult);
   getGif(searchResult);
 }
 
