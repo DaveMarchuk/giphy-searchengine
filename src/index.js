@@ -5,12 +5,12 @@ import GifService from './js/gif-service';
 
 // Business Logic
 function getGif(searchResult)  {
-    let promise = GifService.getGif(searchResult);
-    promise.then(function(gifDataArray) {
-      printElements(gifDataArray);
-    }, function(errorArray) {
-      printError(errorArray);
-    });
+  let promise = GifService.getGif(searchResult);
+  promise.then(function(gifDataArray) {
+    printElements(gifDataArray);
+  }, function(errorArray) {
+    printError(errorArray);
+  });
 }
 
 //UI Logic
