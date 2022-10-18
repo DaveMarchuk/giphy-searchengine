@@ -26,6 +26,7 @@ function printElements(gifData)  {
 
 
 function printError(error)  {
+  console.log(error[1]);
    document.getElementById("searchResultOutPut").innerText = `There was an error finding the GIF you want for ${error[2]}: ${error[0].status} ${error[0].statusText} ${error[1].message}`;
 }
 
